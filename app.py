@@ -225,7 +225,7 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
- form = VenueForm(request.form)
+  form = VenueForm(request.form)
   try:
     venue = Venue()
     form.populate_obj(venue)
