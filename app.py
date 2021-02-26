@@ -60,11 +60,16 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
+    image_link = db.Column(db.String(500), unique=True)
     facebook_link = db.Column(db.String(120))
-
+    # My code
+    #upcoming_shows = db.relationship('Show', backref='artist', lazy=True)
+    # Pseudo code placeholder for functionality
+    past_shows_count = db.Column(db.Integer)
+    upcoming_shows_count = db.Column(db.Integer)
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
+
 class Show(db.Model):
   __tablename__ = 'Show'
 
