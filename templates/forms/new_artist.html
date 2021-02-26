@@ -29,6 +29,10 @@
         {{ form.genres(class_ = 'form-control', placeholder='Genres, separated by commas', id='genres', autofocus = true) }}
       </div>
       <div class="form-group">
+        <label for="website">Website</label>
+        {{ form.website(class_ = 'form-control', placeholder='http://', id='website', autofocus = true) }}
+      </div>
+      <div class="form-group">
           <label for="facebook_link">Facebook Link</label>
           {{ form.facebook_link(class_ = 'form-control', placeholder='http://', id='facebook_link', autofocus = true) }}
       </div>
@@ -41,7 +45,7 @@
         {{ form.seeking_description(class_ = 'form-control', placeholder='Seeking...', id='seeking_description', autofocus = true) }}
       </div>
       <div class="form-group">
-        <label for="image_link">Venue Image</label>
+        <label for="image_link">Artist Image</label>
         {{ form.image_link(class_ = 'form-control', placeholder='http://', id='image_link', autofocus = true) }}
       </div>
       <input type="submit" value="Create Venue" class="btn btn-primary btn-lg btn-block">
