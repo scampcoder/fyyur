@@ -236,3 +236,13 @@ class ArtistForm(Form):
     )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+class ShowForm(Form):
+    artist_id = IntegerField(
+        'artist_id'
+    )
+    venue_id = StringField(
+        'venue_id'
+    )
+    start_time = DateTimeField(
+        'start_time', validators=[InputRequired()]
+    )
