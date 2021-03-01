@@ -26,6 +26,7 @@ def upgrade():
     sa.Column('phone', sa.String(length=120), nullable=True),
     sa.Column('genres', sa.ARRAY(sa.String()), nullable=False),
     sa.Column('image_link', sa.String(length=700), nullable=True),
+    op.add_column(sa.Column('website', sa.String(), nullable=True)),
     sa.Column('facebook_link', sa.String(length=120), nullable=True),
     sa.Column('past_shows_count', sa.Integer(), nullable=True),
     sa.Column('upcoming_shows_count', sa.Integer(), nullable=True),
