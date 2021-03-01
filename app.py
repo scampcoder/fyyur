@@ -77,7 +77,6 @@ class Show(db.Model):
   start_time = db.Column(db.DateTime)
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
-  artist_image_link = db.Column(db.String(), db.ForeignKey('Artist.image_link'))
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 #----------------------------------------------------------------------------#
