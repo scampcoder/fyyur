@@ -12,7 +12,7 @@ class ShowForm(Form):
     )
     start_time = DateTimeField(
         'start_time',
-        validators=InputRequired()],
+        validators=[InputRequired()],
         default= datetime.today()
     )
 
