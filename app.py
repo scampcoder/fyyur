@@ -46,9 +46,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
     genres = db.Column(db.ARRAY(db.String), nullable=False)
-    #upcoming_shows = db.relationship('Show', backref='venue', lazy=True)
-    # Pseudo code placeholder for functionality
-    #past_shows = db.relationship('Show', backref='venue', lazy=True)
+    shows = db.relationship('Show', backref='venue', lazy=True)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -65,17 +63,14 @@ class Artist(db.Model):
     image_link = db.Column(db.String(700), unique=True)
     facebook_link = db.Column(db.String(120))
     # My code
-    #upcoming_shows = db.relationship('Show', backref='artist', lazy=True)
-    # Pseudo code placeholder for functionality
-    past_shows_count = db.Column(db.Integer)
-    upcoming_shows_count = db.Column(db.Integer)
+    shows = db.relationship('Show', backref='artist', lazy=True)
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Show(db.Model):
   __tablename__ = 'Show'
 
   id = db.Column(db.Integer, primary_key=True)
-  start_time = db.Column(db.DateTime)
+  start_time = db.Column(db.DateTime, nullable=False)
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
@@ -292,10 +287,18 @@ def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  shows=Show.query.all()
+  shows=db.session.query(Show).join(Artist).join(Venue).all()
+  data = []
   for show in shows:
-    show.start_time = show.start_time.strftime("%d/%m/%Y, %H:%M")
-  return render_template('pages/shows.html', shows=shows)
+    data.append({
+      'venue_id': show.venue_id,
+      'venue_name': show.venue.name,
+      'artist_id': show.artist_id,
+      'artist_name': show.artist.name,
+      'artist_image_link': show.artist.image_link,
+      'start_time': show.start_time.strftime("%d/%m/%Y, %H:%M")
+    })
+  return render_template('pages/shows.html', shows=data)
   #data=[{
     #"venue_id": 1,
     #"venue_name": "The Musical Hop",
