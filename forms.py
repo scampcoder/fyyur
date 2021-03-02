@@ -225,8 +225,8 @@ class ArtistForm(Form):
         # TODO implement enum restriction
         'facebook_link', validators=[URL()]
     )
-    seeking_talent = BooleanField(
-        'seeking_talent'
+    seeking_venue = BooleanField(
+        'seeking_venue'
     )
     seeking_description = StringField(
         'seeking_description'

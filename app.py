@@ -62,6 +62,8 @@ class Artist(db.Model):
     website = db.Column(db.String(), nullable=True)
     image_link = db.Column(db.String(700), unique=True)
     facebook_link = db.Column(db.String(120))
+    seeking_venue = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(200))
     # My code
     shows = db.relationship('Show', backref='artist', lazy=True)
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
