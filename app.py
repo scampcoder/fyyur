@@ -245,6 +245,7 @@ def edit_venue(venue_id):
   form.name.data = venue.name
   form.city.data = venue.city
   form.state.data = venue.state
+  form.address.data = venue.address
   form.phone.data = venue.phone
   form.genres.data = venue.genres
   form.facebook_link.data = venue.facebook_link
@@ -264,6 +265,7 @@ def edit_venue_submission(venue_id):
     venue.name = request.form['name']
     venue.city = request.form['city']
     venue.state = request.form['state']
+    venue.address = request.form['address']
     venue.phone = request.form['phone']
     venue.genres = request.form.getlist('genres')
     venue.image_link = request.form['image_link']
