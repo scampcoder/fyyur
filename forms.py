@@ -235,4 +235,3 @@ class ArtistForm(Form):
         'website', validators=[URL()]
     )
 
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

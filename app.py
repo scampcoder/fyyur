@@ -14,6 +14,7 @@ from flask_wtf import Form
 from forms import *
 # My code
 from flask_migrate import Migrate
+import sys
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -44,7 +45,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
     genres = db.Column(db.ARRAY(db.String), nullable=False)
-    shows = db.relationship('Show', backref='venue', lazy=True)
+    shows = db.relationship('Show', backref='venue', lazy=True, cascade="delete-orphan")
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -60,15 +61,15 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(200))
-    shows = db.relationship('Show', backref='artist', lazy=True)
+    shows = db.relationship('Show', backref='artist', lazy=True, cascade='delete-orphan')
 
 class Show(db.Model):
   __tablename__ = 'Show'
-
   id = db.Column(db.Integer, primary_key=True)
   start_time = db.Column(db.DateTime, nullable=False)
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
+
 
 
 #----------------------------------------------------------------------------#
@@ -186,6 +187,29 @@ def search_artists():
 def show_artist(artist_id):
   artist=Artist.query.get(artist_id)
   return render_template('pages/show_artist.html', artist=artist)
+
+@app.route('/artists/<artist_id>', methods=['DELETE'])
+def delete_artist(artist_id):
+  # TODO: Complete this endpoint for taking a artist_id, and using
+  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+  error = False
+  try:
+    artist = Artist.query.get(artist_id)
+    db.session.delete(artist)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  if error:
+    flash(f'We\'re sorry, this artist could not be deleted.')
+  if not error:
+    flash(f'Artist was successfully deleted.')
+  return render_template('pages/home.html')
+  # BONUS CHALLENGE: Implement a button to delete a Artist on a Artist Page, have it so that
+  # clicking that button delete it from the db then redirect the user to the homepage
 
 #  Update
 #  ----------------------------------------------------------------
