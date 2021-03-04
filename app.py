@@ -188,28 +188,21 @@ def show_artist(artist_id):
   artist=Artist.query.get(artist_id)
   return render_template('pages/show_artist.html', artist=artist)
 
-@app.route('/artists/<artist_id>', methods=['DELETE'])
+@app.route('/artist/<artist_id>', methods=['POST'])
 def delete_artist(artist_id):
-  # TODO: Complete this endpoint for taking a artist_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-  error = False
-  try:
-    artist = Artist.query.get(artist_id)
-    db.session.delete(artist)
-    db.session.commit()
-  except:
-    error = True
-    db.session.rollback()
-    print(sys.exc_info())
-  finally:
-    db.session.close()
-  if error:
-    flash(f'We\'re sorry, this artist could not be deleted.')
-  if not error:
-    flash(f'Artist was successfully deleted.')
-  return render_template('pages/home.html')
-  # BONUS CHALLENGE: Implement a button to delete a Artist on a Artist Page, have it so that
-  # clicking that button delete it from the db then redirect the user to the homepage
+    try:
+        artist = Artist.query.filter_by(id=artist_id).first_or_404()
+        # current_session = db.object_session(venue)
+        # current_session.delete(venue)
+        # current_session.commit()
+        db.session.delete(artist)
+        db.session.commit()
+        flash('This artist has been removed together with all of its shows.')
+        return render_template('pages/home.html')
+    except ValueError:
+        flash('It was not possible to delete this artist')
+    return redirect(url_for('venues'))
+
 
 #  Update
 #  ----------------------------------------------------------------
