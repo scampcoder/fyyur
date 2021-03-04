@@ -45,7 +45,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
     genres = db.Column(db.ARRAY(db.String), nullable=False)
-    shows = db.relationship('Show', backref='venue', lazy=True, cascade="delete-orphan")
+    shows = db.relationship('Show', backref='venue', lazy=True, cascade="all, delete")
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -61,14 +61,14 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(200))
-    shows = db.relationship('Show', backref='artist', lazy=True, cascade='delete-orphan')
+    shows = db.relationship('Show', backref='artist', lazy=True, cascade='all, delete')
 
 class Show(db.Model):
   __tablename__ = 'Show'
   id = db.Column(db.Integer, primary_key=True)
   start_time = db.Column(db.DateTime, nullable=False)
-  venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
-  artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
+  venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id', ondelete='CASCADE'), nullable=False)
+  artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id', ondelete='CASCADE'), nullable=False)
 
 
 
