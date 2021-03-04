@@ -152,14 +152,17 @@ def create_venue_submission():
     db.session.close()
   return redirect(url_for('venues'))
 
-@app.route('/venues/<venue_id>', methods=['DELETE'])
+@app.route('/venues/<int:venue_id>', methods=['POST'])
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-
-  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-  # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+    try:
+        venue = Venue.query.filter_by(id=venue_id).first_or_404()
+        db.session.delete(venue)
+        db.session.commit()
+        flash('The venue has been removed and all associated shows have been deleted.')
+        return render_template('pages/home.html')
+    except ValueError:
+        flash('Our apologies. It was not possible to delete this venue')
+    return redirect(url_for('index'))
 
 #  Artists
 #  ----------------------------------------------------------------
@@ -192,16 +195,13 @@ def show_artist(artist_id):
 def delete_artist(artist_id):
     try:
         artist = Artist.query.filter_by(id=artist_id).first_or_404()
-        # current_session = db.object_session(venue)
-        # current_session.delete(venue)
-        # current_session.commit()
         db.session.delete(artist)
         db.session.commit()
-        flash('This artist has been removed together with all of its shows.')
+        flash('This artist has been removed and all associated shows have been deleted.')
         return render_template('pages/home.html')
     except ValueError:
-        flash('It was not possible to delete this artist')
-    return redirect(url_for('venues'))
+        flash('Our apologies. It was not possible to delete this artist')
+    return redirect(url_for('index'))
 
 
 #  Update
