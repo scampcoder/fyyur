@@ -410,7 +410,6 @@ def create_artist_submission():
 
 @app.route('/shows')
 def shows():
-  #       num_shows should be aggregated based on number of upcoming shows per venue.
   shows=db.session.query(Show).join(Artist).join(Venue).all()
   data = []
   for show in shows:
