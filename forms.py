@@ -102,6 +102,8 @@ US_phone_area_codes = {
     253, 360, 425, 509, 564, 202, 304, 681, 262, 414, 534, 608, 715, 920, 307
 }
 
+
+
 class ShowForm(Form):
     artist_id = StringField(
         'artist_id'
@@ -164,10 +166,12 @@ class ArtistForm(Form):
         'state', validators=[DataRequired()],
         choices=state_choices
     )
+
     phone = StringField(
-        # TODO implement validation logic for state
-        'phone', validators=[DataRequired(), Regexp("^[0-9]*$")]
+        'phone', validators=[DataRequired()]
     )
+    def validatePhone()
+
     image_link = StringField(
         'image_link', validators=[URL()]
     )
@@ -177,7 +181,8 @@ class ArtistForm(Form):
         choices=genres_choices
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL()]
+        StringField(
+        'facebook_link', validators=[DataRequired(), Regexp('(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?', message="The correct format for the facebook link was not correct")]
     )
     seeking_venue = BooleanField(
         'seeking_venue'
@@ -188,4 +193,3 @@ class ArtistForm(Form):
     website = StringField(
         'website', validators=[URL()]
     )
-
