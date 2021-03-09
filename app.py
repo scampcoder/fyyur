@@ -100,7 +100,7 @@ def index():
 @app.route('/venues')
 def venues():
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  venues=Venue.query.all()
+  venues = Venue.query.all()
   places = Venue.query.distinct(Venue.city, Venue.state).all()
   return render_template('pages/venues.html', venues=venues, places=places)
 
@@ -111,7 +111,7 @@ def search_venues():
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
   response={
-    "count": 1,
+    "count": 1, 
     "data": [{
       "id": 2,
       "name": "The Dueling Pianos Bar",
@@ -124,7 +124,48 @@ def search_venues():
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   venue=Venue.query.get(venue_id)
-  return render_template('pages/show_venue.html', venue=venue)
+  # grab past and upcoming shows to display on venue pg
+  upcoming_shows = []
+  past_shows = []
+  query_upcoming_shows = db.session.query(Show).join(Artist).filter(Show.venue_id==venue_id).filter(Show.start_time>datetime.now()).all()
+  query_past_shows = db.session.query(Show).join(Artist).filter(Show.venue_id==venue_id).filter(Show.start_time<datetime.now()).all()
+  
+  for show in query_upcoming_shows:
+    upcoming_shows.append({
+      'artist_id': show.artist_id,
+      'artist_name': show.artist.name,
+      'artist_image_link': show.artist.image_link,
+      'start_time': show.start_time.strftime("%Y-%m-%d %H:%M:%S")
+    })
+
+  for show in query_past_shows:
+    past_shows.append({
+      'artist_id': show.artist_id,
+      'artist_name': show.artist.name,
+      'artist_image_link': show.artist.image_link,
+      'start_time': show.start_time.strftime("%Y-%m-%d %H:%M:%S")
+    })
+
+  data = {
+    "id": venue.id,
+    "name": venue.name,
+    "genres": venue.genres,
+    "address": venue.address,
+    "city": venue.city,
+    "state": venue.state,
+    "phone": venue.phone,
+    "website": venue.website,
+    "facebook_link": venue.facebook_link,
+    "seeking_talent": venue.seeking_talent,
+    "seeking_description": venue.seeking_description,
+    "image_link": venue.image_link,
+    "past_shows": past_shows,
+    "upcoming_shows": upcoming_shows,
+    "past_shows_count": len(past_shows),
+    "upcoming_shows_count": len(upcoming_shows),
+  }
+
+  return render_template('pages/show_venue.html', venue=data)
 
 #  Create Venue
 #  ----------------------------------------------------------------
