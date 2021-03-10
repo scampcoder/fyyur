@@ -2,7 +2,7 @@ from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, AnyOf, URL, InputRequired, Regexp
-import phonenumbers
+import phonenumbers, re
 
 state_choices = [
             ('AL', 'AL'),
@@ -102,6 +102,12 @@ US_phone_area_codes = {
     253, 360, 425, 509, 564, 202, 304, 681, 262, 414, 534, 608, 715, 920, 307
 }
 
+def phoneValidation(form, field):
+    if phonenumbers.is_valid_number(field) is True:
+        if field.split('').slice(0, 3).join('') not in US_phone_area_codes:
+            raise ValidationError('Please enter a valid United States area code.')
+    else:
+        raise ValidationError("Please enter a valid phone number.")
 
 
 class ShowForm(Form):
@@ -132,7 +138,7 @@ class VenueForm(Form):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone'
+        'phone', validators=[DataRequired(), phoneValidation]
     )
     image_link = StringField(
         'image_link', validators=[URL()]
@@ -143,7 +149,7 @@ class VenueForm(Form):
         choices=genres_choices
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[DataRequired(), Regexp('(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?', message="The correct format for the facebook link was not correct")]
     )
     seeking_talent = BooleanField(
         'seeking_talent'
@@ -168,10 +174,8 @@ class ArtistForm(Form):
     )
 
     phone = StringField(
-        'phone', validators=[DataRequired()]
+        'phone', validators=[DataRequired(), phoneValidation]
     )
-    def validatePhone()
-
     image_link = StringField(
         'image_link', validators=[URL()]
     )
