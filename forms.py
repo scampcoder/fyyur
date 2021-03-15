@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, IntegerField
-from wtforms.validators import DataRequired, AnyOf, URL, InputRequired, Regexp
+from wtforms.validators import DataRequired, AnyOf, URL, InputRequired, Regexp, ValidationError
 import phonenumbers, re
 
 state_choices = [
@@ -102,13 +102,6 @@ US_phone_area_codes = {
     253, 360, 425, 509, 564, 202, 304, 681, 262, 414, 534, 608, 715, 920, 307
 }
 
-def phoneValidation(form, field):
-    if phonenumbers.is_valid_number(field) is True:
-        if field.split('').slice(0, 3).join('') not in US_phone_area_codes:
-            raise ValidationError('Please enter a valid United States area code.')
-    else:
-        raise ValidationError("Please enter a valid phone number.")
-
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -137,8 +130,20 @@ class VenueForm(Form):
     address = StringField(
         'address', validators=[DataRequired()]
     )
+    def validate_phone(form, field):
+        if len(field.data) > 16:
+            raise ValidationError('Invalid phone number.')
+        try:
+            input_number = phonenumbers.parse(field.data)
+            if not (phonenumbers.is_valid_number(input_number)):
+                raise ValidationError('Invalid phone number.')
+        except:
+            input_number = phonenumbers.parse("+1"+field.data)
+            if not (phonenumbers.is_valid_number(input_number)):
+                raise ValidationError('Invalid phone number.')
+
     phone = StringField(
-        'phone', validators=[DataRequired(), phoneValidation]
+        'phone', validators=[InputRequired(), validate_phone]
     )
     image_link = StringField(
         'image_link', validators=[URL()]
@@ -172,20 +177,29 @@ class ArtistForm(Form):
         'state', validators=[DataRequired()],
         choices=state_choices
     )
-
+    def validate_phone(form, field):
+        if len(field.data) > 16:
+            raise ValidationError('Invalid phone number.')
+        try:
+            input_number = phonenumbers.parse(field.data)
+            if not (phonenumbers.is_valid_number(input_number)):
+                raise ValidationError('Invalid phone number.')
+        except:
+            input_number = phonenumbers.parse("+1"+field.data)
+            if not (phonenumbers.is_valid_number(input_number)):
+                raise ValidationError('Invalid phone number.')
+             
     phone = StringField(
-        'phone', validators=[DataRequired(), phoneValidation]
+        'phone', validators=[InputRequired(), validate_phone]
     )
     image_link = StringField(
         'image_link', validators=[URL()]
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
         choices=genres_choices
     )
     facebook_link = StringField(
-        StringField(
         'facebook_link', validators=[DataRequired(), Regexp('(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?', message="The correct format for the facebook link was not correct")]
     )
     seeking_venue = BooleanField(
