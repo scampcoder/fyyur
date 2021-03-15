@@ -112,8 +112,7 @@ class ShowForm(Form):
     )
     start_time = DateTimeField(
         'start_time',
-        validators=[DataRequired()],
-        #default= datetime.today()
+        validators=[DataRequired()]
     )
 
 class VenueForm(Form):
