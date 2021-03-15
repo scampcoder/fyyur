@@ -389,7 +389,7 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   form = ArtistForm(request.form)
-  if form.validate:
+  if form.validate_on_submit:
     try:
       artist = Artist()
       form.populate_obj(artist)
@@ -434,22 +434,23 @@ def create_shows():
 def create_show_submission():
   #form = ShowForm(request.form)
   error = False
-  try:
-    show = Show()
-    show.artist_id = request.form['artist_id']
-    show.venue_id = request.form['venue_id']
-    show.start_time = request.form['start_time']
-    db.session.add(show)
-    db.session.commit()
-    flash('Your show was successfully listed!')
-  except ValueError as e:
-    error = True
-    print(e)
-    db.session.rollback()
-    flash('An error occurred. Your show could not be listed.')
-  finally:
-    db.session.close()
-  return redirect(url_for('shows'))
+  if form.validate_on_submit:
+    try:
+      show = Show()
+      show.artist_id = request.form['artist_id']
+      show.venue_id = request.form['venue_id']
+      show.start_time = request.form['start_time']
+      db.session.add(show)
+      db.session.commit()
+      flash('Your show was successfully listed!')
+    except ValueError as e:
+      error = True
+      print(e)
+      db.session.rollback()
+      flash('An error occurred. Your show could not be listed.')
+    finally:
+      db.session.close()
+    return redirect(url_for('shows'))
 
 @app.errorhandler(404)
 def not_found_error(error):

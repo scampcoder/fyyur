@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, AnyOf, URL, InputRequired, Regexp, ValidationError
 import phonenumbers, re
@@ -79,6 +79,10 @@ genres_choices = [
             ('Other', 'Other'),
         ]
 
+def is_valid_phone(number):
+    regex = re.compile('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$')
+    return regex.match(number)
+
 US_phone_area_codes = {
     205, 251, 256, 334, 938, 907, 480, 520, 602, 623, 928, 479, 501, 870, 209, 213, 
     279, 310, 323, 408, 415, 424, 442, 510, 530, 559, 562, 619, 626, 628, 650, 657, 
@@ -103,7 +107,7 @@ US_phone_area_codes = {
 }
 
 
-class ShowForm(Form):
+class ShowForm(FlaskForm):
     artist_id = StringField(
         'artist_id'
     )
@@ -115,7 +119,7 @@ class ShowForm(Form):
         validators=[DataRequired()]
     )
 
-class VenueForm(Form):
+class VenueForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -129,26 +133,23 @@ class VenueForm(Form):
     address = StringField(
         'address', validators=[DataRequired()]
     )
-    def validate_phone(form, field):
-        if len(field.data) > 16:
-            raise ValidationError('Invalid phone number.')
-        try:
-            input_number = phonenumbers.parse(field.data)
-            if not (phonenumbers.is_valid_number(input_number)):
-                raise ValidationError('Invalid phone number.')
-        except:
-            input_number = phonenumbers.parse("+1"+field.data)
-            if not (phonenumbers.is_valid_number(input_number)):
-                raise ValidationError('Invalid phone number.')
-
     phone = StringField(
-        'phone', validators=[InputRequired(), validate_phone]
+        'phone', validators=[InputRequired(), Regexp('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$', message="Invalid phone number.")]
     )
+    def validate(self):
+        #Define a custom validate method in your Form:
+        rv = FlaskForm.validate(self)
+        if not rv:
+            return False
+        if not is_valid_phone(self.phone.data):
+            self.phone.errors.append('Invalid phone.')
+            return False
+        # if pass validation
+        return True
     image_link = StringField(
         'image_link', validators=[URL()]
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
         choices=genres_choices
     )
@@ -165,7 +166,7 @@ class VenueForm(Form):
         'website', validators=[URL()]
     )
 
-class ArtistForm(Form):
+class ArtistForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -175,22 +176,20 @@ class ArtistForm(Form):
     state = SelectField(
         'state', validators=[DataRequired()],
         choices=state_choices
-    )
-    def validate_phone(form, field):
-        if len(field.data) > 16:
-            raise ValidationError('Invalid phone number.')
-        try:
-            input_number = phonenumbers.parse(field.data)
-            if not (phonenumbers.is_valid_number(input_number)):
-                raise ValidationError('Invalid phone number.')
-        except:
-            input_number = phonenumbers.parse("+1"+field.data)
-            if not (phonenumbers.is_valid_number(input_number)):
-                raise ValidationError('Invalid phone number.')
-             
+    )        
     phone = StringField(
-        'phone', validators=[InputRequired(), validate_phone]
+        'phone', validators=[InputRequired()]
     )
+    def validate(self):
+        #Define a custom validate method in your Form:
+        rv = FlaskForm.validate(self)
+        if not rv:
+            return False
+        if not is_valid_phone(self.phone.data):
+            self.phone.errors.append('Invalid phone.')
+            return False
+        # if pass validation
+        return True
     image_link = StringField(
         'image_link', validators=[URL()]
     )
