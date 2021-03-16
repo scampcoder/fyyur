@@ -83,6 +83,9 @@ def is_valid_phone(number):
     regex = re.compile('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$')
     return regex.match(number)
 
+def is_valid_facebook(link):
+    regex = re.compile('(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?')
+    return regex.match(link)
 
 class ShowForm(FlaskForm):
     artist_id = StringField(
@@ -111,7 +114,7 @@ class VenueForm(FlaskForm):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone', validators=[InputRequired(), Regexp('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$', message="Invalid phone number.")]
+        'phone', validators=[InputRequired()]
     )
     def validate(self):
         rv = FlaskForm.validate(self)
@@ -130,7 +133,7 @@ class VenueForm(FlaskForm):
         choices=genres_choices
     )
     facebook_link = StringField(
-        'facebook_link', validators=[DataRequired(), Regexp('(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?', message="The correct format for the facebook link was not correct")]
+        'facebook_link', validators=[DataRequired(), , Regexp('(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?', message="Please enter a valid facebook link.")]
     )
     seeking_talent = BooleanField(
         'seeking_talent'
@@ -173,7 +176,7 @@ class ArtistForm(FlaskForm):
         choices=genres_choices
     )
     facebook_link = StringField(
-        'facebook_link', validators=[DataRequired(), Regexp('(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?', message="The correct format for the facebook link was not correct")]
+        'facebook_link', validators=[DataRequired(), Regexp('(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?', message="Please enter a valid facebook link.")]
     )
     seeking_venue = BooleanField(
         'seeking_venue'
