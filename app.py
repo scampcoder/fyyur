@@ -395,8 +395,8 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  form = ArtistForm(request.form)
-  if form.validate_on_submit():
+  form = ArtistForm(request.form, meta={'csrf': False})
+  if form.validate():
     try:
       artist = Artist()
       form.populate_obj(artist)
@@ -410,6 +410,11 @@ def create_artist_submission():
       flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.')
     finally:
       db.session.close()
+  else:
+    message = []
+    for field, err in form.errors.items():
+      message.append('|'.join(err))
+      flash('Error ' + str(message))
   return redirect(url_for('artists'))
 
 

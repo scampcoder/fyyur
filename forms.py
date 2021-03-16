@@ -177,10 +177,9 @@ class ArtistForm(FlaskForm):
         choices=state_choices
     )        
     phone = StringField(
-        'phone', validators=[InputRequired()]
+        'phone', validators=[InputRequired(), Regexp('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$', message="Invalid phone number.")]
     )
     def validate(self):
-        #Define a custom validate method in your Form:
         rv = FlaskForm.validate(self)
         if not rv:
             return False
