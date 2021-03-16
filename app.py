@@ -178,7 +178,7 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-  form = VenueForm(request.form)
+  form = VenueForm(request.form, meta={'csrf': False})
   if form.validate():
     try:
       venue = Venue()
@@ -196,7 +196,7 @@ def create_venue_submission():
   else:
     message = []
     for field, err in form.errors.items():
-      message.append(field + ' ' + '|'.join(err))
+      message.append('|'.join(err))
       flash('Error ' + str(message))
   return redirect(url_for('venues'))
 
